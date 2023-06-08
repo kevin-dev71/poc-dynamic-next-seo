@@ -44,7 +44,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const ProductDetail: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ description, id, name, price } = {} as Product) => {
+> = ({ product } = {} as Product) => {
+  const { description, id, name, price } = product;
   return (
     <div>
       ProductDetail {id}
