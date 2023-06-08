@@ -42,7 +42,8 @@ export const getStaticProps: GetStaticProps = ({ params }) => {
 
 const ProductDetail: NextPage<
   InferGetStaticPropsType<typeof getStaticProps>
-> = ({ description, id, name, price } = {} as Product) => {
+> = ({ product } = {} as Product) => {
+  const { description, id, name, price } = product;
   return (
     <div>
       ProductDetail {id}
