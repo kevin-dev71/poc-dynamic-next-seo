@@ -1,23 +1,19 @@
-const productData = {
-  '1': {
+const productData = [
+  {
     id: '1',
     name: 'Laptop',
     price: 100000,
     description: 'Laptop Gaming 2023',
   },
-  '2': {
+  {
     id: '2',
     name: 'Desktop',
     price: 200000,
     description: 'PC Gaming 2023',
   },
-};
+];
 
-import type {
-  GetServerSideProps,
-  InferGetServerSidePropsType,
-  NextPage,
-} from 'next';
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from 'next';
 
 type Product = {
   id: string;
@@ -26,24 +22,26 @@ type Product = {
   description: string;
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id = '1' } = context.params ?? {};
-  // do validations that id is valid
-  const stringifyId = String(id) as keyof typeof productData;
+// This function gets called at build time
+export async function getStaticPaths() {
+  // We'll pre-render only these paths at build time.
+  // { fallback: false } means other routes should 404.
+  const paths = productData.map((p) => ({
+    params: { id: p.id },
+  }));
+  return { paths, fallback: false };
+}
 
-  // do fetching product detail
-  const product = id ? productData[stringifyId] : null;
+// This also gets called at build time
+export const getStaticProps: GetStaticProps = ({ params }) => {
+  const product = productData.find((product) => product.id === params?.id);
 
-  // Return the fetched data as props for the component
-  return {
-    props: {
-      product,
-    },
-  };
+  // Pass post data to the page via props
+  return { props: { product } };
 };
 
 const ProductDetail: NextPage<
-  InferGetServerSidePropsType<typeof getServerSideProps>
+  InferGetStaticPropsType<typeof getStaticProps>
 > = ({ description, id, name, price } = {} as Product) => {
   return (
     <div>
